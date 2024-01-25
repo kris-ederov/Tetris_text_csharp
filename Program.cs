@@ -7,7 +7,7 @@
         static char charEmpty = '.';
         static char charPiece = 'o';
         //TO DO:charPiece must be different than charFilled due to RotatePiece
-        static char charFilled = 'O';
+        static char charFilled = 's';
         static char[,] gridChars = new char[sizeX, sizeY];
 
         static void Main(string[] args)
@@ -16,10 +16,17 @@
             DrawGridInit();
             //gridChars[1, 2] = charPiece;
             //gridChars[1, 3] = charFilled;
+            gridChars[4, 4] = charFilled;
             PrintGrid();
             AddPiece('T');
             PrintGrid();
             RotatePiece();
+            PrintGrid();
+            MovePieceDown();
+            PrintGrid();
+            MovePieceDown();
+            PrintGrid();
+            MovePieceDown();
             PrintGrid();
         }
 
@@ -141,26 +148,26 @@
                 {
                     gridCharsTemp[i - pieceMinX, j - pieceMinY] = gridChars[i, j];
                     //Clear piece
-                    gridChars[i, j] = charEmpty; 
+                    gridChars[i, j] = charEmpty;
                 }
             }
-            Console.WriteLine("pieceMinX: " + pieceMinX);
-            Console.WriteLine("pieceMaxX: " + pieceMaxX);
-            Console.WriteLine("pieceMinY: " + pieceMinY);
-            Console.WriteLine("pieceMaxY: " + pieceMaxY);
+            //Console.WriteLine("pieceMinX: " + pieceMinX);
+            //Console.WriteLine("pieceMaxX: " + pieceMaxX);
+            //Console.WriteLine("pieceMinY: " + pieceMinY);
+            //Console.WriteLine("pieceMaxY: " + pieceMaxY);
 
             //Print out test matrix
-            Console.WriteLine("\nTemp_matrix start");
-            for (int j = 0; j < 4; j++)
-            {
-                string test = "";
-                for (int i = 0; i < 4; i++)
-                {
-                    test += gridCharsTemp[i, j];
-                }
-                Console.WriteLine(test);
-            }
-            Console.WriteLine("Temp_matrix end");
+            //Console.WriteLine("\nTemp_matrix start");
+            //for (int j = 0; j < 4; j++)
+            //{
+            //    string test = "";
+            //    for (int i = 0; i < 4; i++)
+            //    {
+            //        test += gridCharsTemp[i, j];
+            //    }
+            //    Console.WriteLine(test);
+            //}
+            //Console.WriteLine("Temp_matrix end");
 
             int pieceDelX = pieceMaxX - pieceMinX;
             int pieceDelY = pieceMaxY - pieceMinY;
@@ -178,17 +185,17 @@
             }
 
             //Print out new temp matrix
-            Console.WriteLine("Temp_matrix_new start");
-            for (int j = 0; j < 4; j++)
-            {
-                string test = "";
-                for (int i = 0; i < 4; i++)
-                {
-                    test += gridCharsTempNew[i, j];
-                }
-                Console.WriteLine(test);
-            }
-            Console.WriteLine("Temp_matrix_new end\n");
+            //Console.WriteLine("Temp_matrix_new start");
+            //for (int j = 0; j < 4; j++)
+            //{
+            //    string test = "";
+            //    for (int i = 0; i < 4; i++)
+            //    {
+            //        test += gridCharsTempNew[i, j];
+            //    }
+            //    Console.WriteLine(test);
+            //}
+            //Console.WriteLine("Temp_matrix_new end\n");
 
             //Write back new temp matrix to gridChars[]
             for (int i = pieceMinX; i <= pieceMinX + 3; i++)
@@ -206,7 +213,63 @@
 
         public static void MovePieceDown()
         {
+            Console.WriteLine("\nMove piece down");
 
+            bool canBeMoved = true;
+
+            //Go down each line and check if charPiece can be moved
+            for (int i = 0; i < sizeX; i++)
+            {
+                for (int j = 0; j < sizeY; j++)
+                {
+                    if (j == sizeY - 1 && gridChars[i, j] == charPiece)
+                    {
+                        canBeMoved = false;
+                    }
+                    if (j < sizeY - 1)
+                    {
+                        if (gridChars[i, j] == charPiece && gridChars[i, j + 1] == charFilled)
+                        {
+                        canBeMoved = false;
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Can be moved down: " +canBeMoved);
+
+            //Move piece down
+            if (canBeMoved)
+            {
+                for (int i = sizeX - 1; i >= 0; i--)
+                {
+                    for (int j = sizeY - 1; j >= 0; j--)
+                    {
+                        if (j > 0)
+                        {
+                            if (gridChars[i, j - 1] == charPiece)
+                            {
+                                gridChars[i, j] = charPiece;
+                                gridChars[i, j - 1] = charEmpty;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Solidify piece
+            if (!canBeMoved)
+            {
+                for (int i = 0; i < sizeX; i++)
+                {
+                    for (int j = 0; j < sizeY; j++)
+                    {
+                        if (gridChars[i, j] == charPiece)
+                        {
+                            gridChars[i, j] = charFilled;
+                        }
+                    }
+                }
+            }
         }
 
         public static void PrintGrid()
